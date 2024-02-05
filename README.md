@@ -5,6 +5,7 @@
    - 3D Vector
    - Matrices (Column major order)
    - Helper functions
+   - Unit tests
  - Tool to statically embed assets in executable
 
 # License
