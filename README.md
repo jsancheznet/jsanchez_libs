@@ -1,3 +1,13 @@
+# Features
+ - Generic dynamic array
+ - Game math library
+   - 2D Vectors
+   - 3D Vector
+   - Matrices (Column major order)
+   - Helper functions
+   - Unit tests
+ - Tool to statically embed assets in executable
+
 # License
 
 This is free and unencumbered software released into the public domain.
