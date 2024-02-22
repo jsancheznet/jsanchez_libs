@@ -7,6 +7,7 @@
    - Helper functions
    - Unit tests
  - Tool to statically embed assets in executable
+ - Linear memory allocator
 
 # License
 
