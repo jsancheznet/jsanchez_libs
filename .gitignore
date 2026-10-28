@@ -1,0 +1,5 @@
+*.exe
+*.pdf
+*.obj
+*.pdb
+.vs/
