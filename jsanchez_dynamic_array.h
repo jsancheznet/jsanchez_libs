@@ -17,7 +17,7 @@
 
 	// Pops the last element of the array. The array also resized down
 	// when the size is 1/3 of the capacity and you pop one element.
-	my_struct *Foo;
+	my_struct Foo;
 	ArrayPop(StructArray, &Foo);
 
 	// Get the current array size and capacity, ArrayCount is the same as
@@ -97,28 +97,23 @@
 // 2- Verify OUT is valid
 // 3- Set Raw pointer, Raw[0] == Size | Raw[1] == Capacity
 // 4- Make sure we are not trying to pop an empty array
-// 5- If Array Size > 0, set OUT to the last items in the array
+// 5- Set OUT to the last item in the array
 // 6- Decrement Array Size by 1
-// 7- If ArraySize <= ArrayCapacity/3 realloc and copy
-// 8- If ArraySize <= 1/4 of ArrayCapacity, realloc to be ArraySize * 2 * sizeof(Type) + Raw
-#define ArrayPop(ARRAY, OUT)                                        \
-    do  {                                                           \
-        assert(ARRAY);                                              \
-        assert(OUT);                                                \
-        int *Raw = ((int*)(ARRAY) - 2);                             \
-        if(Raw[0] == 0)                                             \
-        {                                                           \
-            *(OUT) = NULL;                                          \
-        }                                                           \
-        else if(Raw[0] > 0)                                         \
-        {                                                           \
-            (*(OUT)) = ARRAY[Raw[0] - 1];                           \
-            Raw[0] -= 1;                                            \
-                                                                    \
-            if(Raw[0] <= Raw[1]/4)                                  \
-            {                                                       \
-                Raw = realloc(Raw, 2 * sizeof(int) + Raw[0] * 2 * sizeof(*(OUT))); \
-                assert(Raw);                                            \
-            }                                                       \
-        }                                                           \
-    } while(0)                                                      \
+// 7- If ArraySize <= 1/4 of ArrayCapacity, set Capacity to ArraySize * 2, realloc and update ARRAY
+#define ArrayPop(ARRAY, OUT)                                            \
+    do  {                                                               \
+        assert(ARRAY);                                                  \
+        assert(OUT);                                                    \
+        int *Raw = ((int*)(ARRAY) - 2);                                 \
+        assert(Raw[0] > 0);                                             \
+        (*(OUT)) = (ARRAY)[Raw[0] - 1];                                 \
+        Raw[0] -= 1;                                                    \
+                                                                        \
+        if(Raw[0] <= Raw[1]/4)                                          \
+        {                                                               \
+            Raw[1] = Raw[0] * 2;                                        \
+            Raw = realloc(Raw, 2 * sizeof(int) + Raw[1] * sizeof(*(ARRAY))); \
+            assert(Raw);                                                \
+            (ARRAY) = (void*)&Raw[2];                                   \
+        }                                                               \
+    } while(0)                                                          \

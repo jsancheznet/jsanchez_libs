@@ -1,9 +1,3 @@
-/*
-  TODO List
-
-  - ArrayPop is currently failing, reimplement whole dynamic array? i
-    want to try implementation with minimal macro use.
- */
 #include <assert.h>
 #include <stdio.h>
 
@@ -61,9 +55,9 @@ int main(void)
         // errors in a better way. In the meantime, uncomment this
         // line for the test.
         // player *Players;
+        // player Out;
         // ArrayInit(Players);
         // ArrayPop(Players, &Out);
-        // player Out;
     }
 
     { // TEST: Check that the array is rezising upwards correctly
