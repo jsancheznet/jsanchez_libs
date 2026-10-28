@@ -1,6 +1,6 @@
 /*
 	HOWTO USE
-	
+
 	#include "jsanchez_dynamic_array.h"
 
 	// Create a pointer with the desired array type

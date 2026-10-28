@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <ctype.h>
 
 #define MAX_FILENAME_LENGTH 512 // I made this up, should probably use the real macro's OS offer
 
@@ -38,29 +39,27 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    // Open file, extract the filename, replace the last . with _
+    // Open file, extract the filename, turn it into a valid identifier
     InputFile = fopen(argv[1], "rb");
-
-#if _WIN32
-    Filename = strrchr(argv[1], '\\');
-    if(Filename == NULL)
-    {
-        Filename = argv[1];
-    }
-#elif __linux__
-    Filename = strrchr(argv[1], '/');
-    if(Filename == NULL)
-    {
-        Filename = argv[1];
-    }
-#endif
-
-    StringReplaceChar(Filename, '.', '_');
-
     if(InputFile == NULL)
     {
-        printf("Something went wrong opening the input file: %s\n", argv[1]);
+        fprintf(stderr, "Something went wrong opening the input file: %s\n", argv[1]);
         return 1;
+    }
+
+#if _WIN32
+    StringReplaceChar(argv[1], '\\', '/'); // Windows accepts both, so only look for /
+#endif
+    Filename = strrchr(argv[1], '/');
+    Filename = Filename ? Filename + 1 : argv[1];
+
+    // Anything that isn't a letter, digit or _ becomes _ so the name is a valid identifier
+    for(char *c = Filename; *c != '\0'; c++)
+    {
+        if(!isalnum((unsigned char)*c) && *c != '_')
+        {
+            *c = '_';
+        }
     }
 
     // Get file size
@@ -69,8 +68,8 @@ int main(int argc, char **argv)
     rewind(InputFile);
 
     // Output to stdout
-    printf("long int _Size_%s = %ld;\n", Filename, FileSize);
-    printf("unsigned char _%s[] = {\n\t", Filename);
+    printf("static const long int _Size_%s = %ld;\n", Filename, FileSize);
+    printf("static const unsigned char _%s[] = {\n\t", Filename);
     for(long int i = 1; i <= FileSize; i++)
     {
         char Buff = fgetc(InputFile);
